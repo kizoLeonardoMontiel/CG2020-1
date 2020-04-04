@@ -46,8 +46,37 @@ int draw(int c1x, int c2x, int c3x, int c4x, int c1y, int c2y, int c3y, int c4y)
    return 0;
 }
 
-int drawNewSegment(int cx, int cy){
+int drawNewSegment(int c1x, int c2x, int c3x, int c4x, int c1y, int c2y, int c3y, int c4y, int cx, int cy){
+   int maxx, maxy, poly[10], i, errorcode;
+   int gd = DETECT, gm;
+   initgraph(&gd,&gm,NULL);
+   errorcode=graphresult();
+   if(errorcode)
+       exit(1);
+
+   maxx = getmaxx();
+   maxy = getmaxy();
+   
+   setviewport(0,0,maxx,maxy,1);
+  
+   
+     
+   float t=0, px, py;  //pow(variável, expoente)
+   while(t<=1){
+    px = pow((1-t),3) * 1 + c1x * t * pow((1-t),2) * 2 + c2x * pow(t,2) * (1-t) * c3x + pow(t,3) * c4x + pow(t,3) * cx;
+    py = pow((1-t),3) * 1 + c1y * t * pow((1-t),2) * 3 + c2y * pow(t,2) * (1-t) * c3y + pow(t,3) * c4y + pow(t,3) * cy;
+    
+    mapeamento(maxx, 0, maxy, 0, 6, 0, 6, 0, px, py );
 	
+	putpixel(xt, yt,BLUE);
+	t = t + 0.0001;
+   	
+   }
+ 
+   getch();
+   clearviewport();
+   closegraph();
+   return 0;
 }
 
 int main()
@@ -71,6 +100,7 @@ int main()
    printf("Digite a quarta coordenada de y: \n");
    scanf("%i", &coord4y);
    draw(coord1x, coord2x, coord3x, coord4x, coord1y, coord2y, coord3y, coord4y);
+   
    
    //r = resposta se quer alterar ou nao; eixo = eixo a se alterar; nCoord = identificador da coordenada no eixo selecionado; newCoord = valor da alteracao
    char r, eixo;
@@ -121,9 +151,23 @@ int main()
 		 	return 0;
 		 }
 	   }else{
-	     printf("Obrigado! \n");
-	     getche();
-	     return 0;
-	   }
+	     char r2;
+	     r2 = 'y';
+	     printf("Incluir novo segmento na curva? (y/n)\n");
+	     scanf(" %c", &r2);
+	     if(r2 == 'y'){
+	     	//Coordenadas X e Y para o novo segmento de curva
+	    	int nCoordX, nCoordY;
+	    	printf("Digite o valor da coordenada em X: \n");
+   		    scanf("%i", &nCoordX);
+   			printf("Digite o valor da coordenada em Y: \n");
+  			scanf("%i", &nCoordY);
+  			drawNewSegment(coord1x, coord2x, coord3x, coord4x, coord1y, coord2y, coord3y, coord4y, nCoordX, nCoordY);
+  			r = 'y';
+		 }else{
+		 	printf("Obrigado! \n");
+			getche();
+		 }
+		}
 	}
 }
